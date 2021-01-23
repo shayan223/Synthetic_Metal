@@ -39,12 +39,16 @@
 \bibliography{sources}
 \bibentry{dopelearning}
 \subsection{Background}
+The research paper entitled "Dopelearning" utilizes deep learning methods to generate substantive and meaningful lyrics for rap-based songs. The rankSVM and deep neural networks were used to create verses possessing both semantic meaning and above-average rhyming density. 
 \subsection{Summary of Contributions}
+Algorithmic extraction of three types of lyrical features:
+rhymes, structural sentence patterns, and semantic features. This research builds upon prior works in deep learning-based methods for rhyme extraction and meaningful lyric construction. Performance measures were not only able to correctly identify the following line in a rap verse 17\% of the time out of 299 candidates, but also was able to generate lyrical rhyme schemes containing above-average rhyme densities. Additionally, the lyric generator was deployed as an online tool for assisting in the creation of rap music.
 \subsection{Limitations and Discussion}
+Although their model was able to correctly identify the following lyrical passage 17\% of the time, it still has problems in generating semantically correlated verses. Additionally, their use of the "bag of words" method doesn't preserve word positioning. This lack of these fine-grained relationships may impact its ability to generate properly formed sentences. It also does not address syllable counts, which is essential for generating high quality lyrics that can be overlayed over many different beats, due to maintaining a common ratio of beats per measure.
 \subsection{Why This Paper?}
+The clarity of the paper in both detailing the algorithmic implementation, as well as in identifying and extracting features, is very accessible and relevant to our project. While not all of the songs we will be training on will maintain strict rhyming schemes, their methods for training the network to detect certain sentence structures or properties of words serves as a guide for engineering our own feature extraction methods.
 \subsection{Wider Research Context}
-
-
+This paper furthers computer-based methods of understanding and constructing rhyme-centric sentence structures. This work may find future use in furthering the analysis of writing and poetry. Its ability to mimic the writing styles of various authors, lyricists, and poets may also useful for furthering style transfer type models in NLP tasks.
 \section{Proposed Project}
 
 \subsection{Main Goal}
