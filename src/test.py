@@ -3,8 +3,12 @@ import pandas as pd
 import nltk
 import os
 from tqdm import tqdm
+from nltk.tokenize import word_tokenize
+
 
 DATA_DIR = '../data/metal_lyrics'
+nltk.download('words')
+nltk.download('punkt')
 
 
 tokenizer = nltk.LineTokenizer()
@@ -31,6 +35,23 @@ data.pop(0)
 #Tokenize data line by line
 #Tokens contains at each index, a list of strings, each string being
 # a line of a song
+
 tokens = []
+filter_tokens = ['ich', 'en', 'se', 'z', 'Z', 'bir', 'ruh', 'ein', 'es', 'zur', 'te', 'y', 'di']
+filter_whole = ['Ã']
 for song in data:
-    tokens.append(tokenizer.tokenize(song))
+    add_song = True
+    tks = word_tokenize(song)
+    if '[Instrumental]' in song or '[instrumental]' in song:
+        add_song = False
+    for f in filter_whole:
+        if f in song:
+            add_song = False
+    if add_song:
+        for f in filter_tokens:
+            if f in tks:
+                add_song = False
+        if add_song:
+            if song != "\n":
+                tokens.append(song)
+                print(song)
