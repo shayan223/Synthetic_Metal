@@ -33,6 +33,8 @@ def filter_data():
                 continue
     # Get rid of another formatting string that gets read in.
     data.pop(0)
+    
+    #print("I am printing data!!!!!!!", data)
 
     # Tokenize data line by line.
     # Tokens contains at each index, a list of strings, each string being a line of a song.
@@ -61,8 +63,9 @@ def filter_data():
 
     # Saves off filtered song list to file.
     f_data = {'songs': tokens}
-    with open('../data/filtered-songs.txt', 'w') as f_out:
+    with open("../data/filtered-songs.txt", 'w') as f_out:
         json.dump(f_data, f_out)
+    return tokens
 
 def load_data():
     global data
@@ -73,6 +76,6 @@ def load_data():
         with open(fpath) as f:
             data = json.load(f)['songs']
     else:
-        filter_data()
+        data = filter_data()
     print('Loaded/Pre-processed {} songs!'.format(len(data)))
     return data
