@@ -64,7 +64,7 @@ def filter_data():
     with open('../data/filtered-songs.txt', 'w') as f_out:
         json.dump(f_data, f_out)
 
-def main():
+def load_data():
     global data
     fpath = "../data/filtered-songs.txt"
 
@@ -75,6 +75,4 @@ def main():
     else:
         filter_data()
     print('Loaded/Pre-processed {} songs!'.format(len(data)))
-
-if __name__ == "__main__":
-    main()
+    return data
