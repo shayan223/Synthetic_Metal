@@ -26,7 +26,7 @@ def main():
     plt.gca().set(title='Song Length Distribution (in chars)', ylabel = 'Frequency')
     plt.show()
 
-    dataset = lyrics_generator(data=data, control_code="<|tweet|>", gpt2_type="gpt2")
+    dataset = lyrics_generator(data=data, control_code="<|lyric|>", gpt2_type="gpt2")
 
     #model = train(dataset, GPT2LMHeadModel.from_pretrained(gpt2_type),
     #                GPT2Tokenizer.from_pretrained(gpt2_type),
@@ -41,6 +41,14 @@ def main():
     #                output_prefix="twitter",
     #                save_model_on_epoch=True
     #)
+
+    from transformers import GPT2Tokenizer, TFGPT2Model
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+    model = TFGPT2Model.from_pretrained('gpt2')
+    text = "Replace me by any text you'd like."
+    encoded_input = tokenizer(text, return_tensors='tf')
+    output = model(encoded_input)
+    print("Generated Text: {}".format(output))
 
 if __name__ == "__main__":
     main()
