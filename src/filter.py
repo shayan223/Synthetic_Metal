@@ -16,7 +16,6 @@ nltk.download('punkt')
 # data loaded from ../data/filtered-songs.txt
 data = []
 
-
 def filter_data():
     global data
     tokenizer = nltk.LineTokenizer()
@@ -63,6 +62,7 @@ def filter_data():
     f_data = {'songs': tokens}
     with open('../data/filtered-songs.txt', 'w') as f_out:
         json.dump(f_data, f_out)
+    return tokens
 
 def load_data():
     global data
@@ -73,6 +73,6 @@ def load_data():
         with open(fpath) as f:
             data = json.load(f)['songs']
     else:
-        filter_data()
+        data = filter_data()
     print('Loaded/Pre-processed {} songs!'.format(len(data)))
     return data
