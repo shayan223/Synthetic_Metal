@@ -129,3 +129,11 @@ dmypy.json
 .pyre/
 data/filtered-songs.txt
 .idea/workspace.xml
+
+/models
+/models/*
+/src/checkpoint
+/src/checkpoint/*
+/src/samples/
+/src/samples/*
+

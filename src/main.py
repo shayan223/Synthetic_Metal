@@ -1,18 +1,23 @@
 import filter
-import generate
+from generate import get_tagged_data
 from generate import lyrics_generator
 import random
 import matplotlib.pyplot as plt
 import numpy as np
 from transformers import GPT2Tokenizer
-from model import train
+from sklearn.model_selection import train_test_split
+from gpt2_client import GPT2Client
+from tqdm import tqdm
+import gpt_2_simple as gpt2
+import torch
+import nvgpu
+import os
+from os import path
+import tensorflow as tf
 
 
 def main():
     data = filter.load_data()
-
-    # Selects a random song to test output. Can be pruned later.
-    # rselect = random.randint(1, len(data)-1)
 
     # Get the length of each song in characters
     song_lengths = []
@@ -24,31 +29,78 @@ def main():
     x = np.random.normal(size = 10)
     plt.hist(song_lengths, bins = 150, range=(0,3000))
     plt.gca().set(title='Song Length Distribution (in chars)', ylabel = 'Frequency')
-    plt.show()
+    # plt.show()
 
-    dataset = lyrics_generator(data=data, control_code="<|lyric|>", gpt2_type="gpt2")
 
-    #model = train(dataset, GPT2LMHeadModel.from_pretrained(gpt2_type),
-    #                GPT2Tokenizer.from_pretrained(gpt2_type),
-    #                batch_size=16,
-    #                epochs=1,
-    #                lr=3e-5,
-    #                max_seq_len=140,
-    #                warmup_steps=5000,
-    #                gpt2_type=gpt2_type,
-    #                device="cuda",
-    #                output_dir="trained_models",
-    #                output_prefix="twitter",
-    #                save_model_on_epoch=True
-    #)
+    # model_size is a customizable parameter used to fine tune the model size using the model_sizes dictionary
+    model_size = 'small'
+    model_names = {'small': '124M', 'medium': '355M', 'large': '774M', 'xl': '1558M'}
+    model_dims  = {'small': 768,    'medium': 1024,   'large': 1280,   'xl': 1600}
+    model_name  = model_names[model_size]
+    model_root = '../models/'
+    model_path = model_root + model_name
+    check_point_root = '../checkpoint/'
+    check_point_path = check_point_root + model_name
 
-    from transformers import GPT2Tokenizer, TFGPT2Model
-    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-    model = TFGPT2Model.from_pretrained('gpt2')
-    text = "Replace me by any text you'd like."
-    encoded_input = tokenizer(text, return_tensors='tf')
-    output = model(encoded_input)
-    print("Generated Text: {}".format(output))
+    # Name of the fine-tuned model checkpoint (different names store different checkpoints)
+    run_name = 'small_1'
+
+    # tagged_data = lyrics_generator(data=data, control_code="<|lyric|>", gpt2_type="gpt2")
+    tpath = get_tagged_data(data=data, model_size=model_dims[model_size])
+
+    # If CUDA isn't available make sure you run the following installations IN CONDA SPECIFICALLY for your environment:
+    # conda install -c anaconda cudatoolkit
+    # conda install -c anaconda cudnn
+    # conda install -c pytorch pytorch
+    # conda install -c pytorch torchvision
+    # conda install -c pytorch pytorch-nightly
+    # conda install -c anaconda tensorflow-gpu
+    print("IS CUDA GPU AVAILABLE: ", torch.cuda.is_available())
+
+    # Downloads the model if it hasn't already been downloaded.
+    if not path.isdir(model_path):
+        gpt2.download_gpt2(model_name=model_name, model_dir=model_root)
+    # Resets the session for retraining
+    # tf.reset_default_graph()
+    # Starts the tensorflow session
+    sess = gpt2.start_tf_sess()
+
+    # Customizable parameter of whether you want to load a previously-fine-tuned model checkpoint.
+    load_previous_model = True
+    fine_tune_model     = True
+    generate_lyrics     = False
+    restore_method      = ['fresh', 'latest']
+
+    # Whether a previous model's checkpoints should be loaded using 'run_name'.
+    if load_previous_model:
+        if path.isdir(check_point_path):
+            gpt2.load_gpt2(sess, run_name=run_name, model_dir=model_path, checkpoint_dir=check_point_path, model_name=model_name)
+
+    # Whether the model should be fine-tuned.
+    if fine_tune_model:
+        gpt2.finetune(sess,
+                      dataset=tpath,
+                      model_name=model_name,
+                      model_dir=model_root,
+                      steps=1000,
+                      restore_from=restore_method[1],
+                      run_name=run_name,
+                      print_every=10,
+                      sample_every=100,
+                      save_every=500
+                      )
+        print('Model has completed its fine-tuning!')
+
+    # Whether the model should be used to generate lyrics.
+    if generate_lyrics:
+        # Generate lyrics using fine-tuned GPT2 model
+        # If prefix parameter is specified we can provide the input string used to generate the lyrics
+        default_prefix = "<|song|>"
+        truncate = '<|endoftext|>'
+        prefix = default_prefix
+        text = gpt2.generate(sess, run_name=run_name, prefix=prefix, include_prefix=False, truncate=truncate, return_as_list=True, temperature=0.85, batch_size=1)[0]
+        print("Generated Lyrics: \n", prefix)
+
 
 if __name__ == "__main__":
     main()

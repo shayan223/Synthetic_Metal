@@ -7,7 +7,6 @@ from tqdm import tqdm
 from nltk.tokenize import word_tokenize
 import json
 
-
 DATA_DIR = '../data/metal_lyrics'
 nltk.download('words')
 nltk.download('punkt')
