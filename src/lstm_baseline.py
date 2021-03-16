@@ -9,7 +9,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 import filter
 data = filter.load_data()
-data = data[:100]
+data = data[:1000]
 print(len(data))
 
 #use gpu for NN training
@@ -130,7 +130,7 @@ def predict(dataset, model, text, next_words=100):
     return words
 
 def training_tests():
-    epochs = 10
+    epochs = 5
     batch_size = 512
     sequence_len = 4
 
@@ -157,7 +157,7 @@ def model_evaluation():
     model = Model(dataset)
     model.load_state_dict(torch.load('../data/trained.model'))
 
-    test_output = predict(dataset, model, text='laughter of children')
+    test_output = predict(dataset, model, text='Have a great day')
     test_output = ' '.join(test_output)
     print(test_output)
 
