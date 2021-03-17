@@ -8,8 +8,9 @@ import numpy as np
 from torch import nn, optim
 from torch.utils.data import DataLoader
 import filter
+import random
 data = filter.load_data()
-data = data[:1000]
+data = data[:2000]
 print(len(data))
 
 #use gpu for NN training
@@ -161,10 +162,38 @@ def model_evaluation():
     test_output = ' '.join(test_output)
     print(test_output)
 
+def gen_sample_output():
+    sequence_len = 4
+
+    dataset = Dataset(sequence_len)
+    model = Model(dataset)
+    model.load_state_dict(torch.load('../data/trained.model'))
+
+    seed_sent = 'Have a great day'
+    samples = []
+
+    for i in range(300):
+        try:
+            test_output = predict(dataset, model, text=seed_sent)
+            test_output = ' '.join(test_output)
+            samples.append(test_output)
+
+            #get the last 4 words as seed for the next output
+            word_list = test_output.split()
+            next_seed = word_list[-4:]
+            #convert list of words back to string
+            seed_sent = " ".join(next_seed)
+        except:
+            #if that doesn't work just pick a single random word from the corpus
+            seed_sent = random.choice(dataset.uniq_words)
+        print(seed_sent)
+
+    corp = pd.DataFrame(samples)
+    corp.to_csv('../data/baseline_sample_output.csv')
 
 #training_tests()
-model_evaluation()
-
+#model_evaluation()
+gen_sample_output()
 
 
 
