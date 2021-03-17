@@ -189,7 +189,7 @@ def gen_sample_output():
         print(seed_sent)
 
     corp = pd.DataFrame(samples)
-    corp.to_csv('baseline_sample_output')
+    corp.to_csv('../data/baseline_sample_output.csv')
 
 #training_tests()
 #model_evaluation()
