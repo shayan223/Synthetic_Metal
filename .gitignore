@@ -128,3 +128,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 data/filtered-songs.txt
+.idea/workspace.xml
+
+/models
+/models/*
+/src/checkpoint
+/src/checkpoint/*
+/src/samples/
+/src/samples/*
+
