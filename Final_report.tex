@@ -1,0 +1,712 @@
+
+
+\documentclass[11pt]{article}
+\usepackage{acl2015}
+\usepackage{times}
+\usepackage{url}
+\usepackage{bibentry}
+\usepackage{latexsym}
+\usepackage{scalerel}
+\usepackage{graphicx,xparse}
+\usepackage{multirow}
+\usepackage[hyphens]{url}
+\usepackage{hyperref} 
+%\setlength\titlebox{5cm}
+
+
+\title{CS510 NLP - Synth Metal \emojione{}{\scalerel*{\includegraphics{1F918}}{X}}}
+
+\author{Lawrence Gunnell \\
+  Portland State University \\
+  905 sw Cedar Hills blvd \\
+  {\tt lgunnell@pdx.edu} \\\And
+  Santiago Tobon \\
+  Portland State University \\
+  9930 sw 151st ave \\
+  {\tt stobon@pdx.edu} \\ \\\And
+  Shayan Jalalipour \\
+  Portland State University \\
+  16766 sw Marcile ln \\
+  {\tt shayan2@pdx.edu} \\}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+\section{Abstract}
+
+Using models such as LSTM and GPT-2 we attempt to generate “Reasonable” and “Realistic” lyrics for “Heavy Metal” genre songs based on a corpus of 156k heavy metal songs, analysed based on their subjective believability as well as the models’ objective ability to create semantically accurate lyrics when compared to ground truth human writing.
+
+\section{Introduction}
+
+With the ever increasing capabilities of NLP models alongside much of the recently thriving machine learning field, there exists the seldom explored area of machine creativity. It explores whether or not generative models can be successfully applied to the arts. This is a hard question to answer because of the subjectivity of art, but is nevertheless an interesting pursuit. 
+
+The goal of this project is to generate heavy metal song lyrics of a high enough quality that they become arguably indistinguishable from human-written lyrics. Common well-performing NLP models were used to so: GPT-2 (Generative Pre-trained Transformer) models were tuned using a corpus of english language heavy metal lyrics and compared to a baseline LSTM (Long Short-Term Memory) model and evaluated using BLEU score metrics, alongside evaluation from human ‘experts’. Due to hardware constraints, testing was performed only on small and medium network sizes.
+
+\section{Related Work}
+
+A 2016 paper called “DopeLearning” \cite{dopelearning} utilizes deep learning methods to generate substantive and meaningful lyrics for rap-based songs. This research builds upon prior works in deep learning-based methods for rhyme extraction and meaningful lyric construction and was also able to generate lyrical rhyme schemes containing above average rhyme densities. Additionally, the lyric generator was deployed as an online tool for assisting in the creation of rap music.
+
+In summary, the paper constructs rap music by training a neural network to distinguish real lines from fake generated ones out of a list of candidate lines. Multiple neural networks are used for word, phrase, and line selection based on a number of factors including word semantics and rhyming lines. Then another prediction model is built to select words and lines to generate new rap songs using the same process of picking likely following lines from a series of candidates. Final output was verified by both a metric for “Rhyme Density” as well as human verification.
+
+We initially planned to model our experiments after this paper, however it quickly became apparent that the writing style of rapping did not match well with many of the heavy metal lyrics we were working with. Rather than needing to generate rhymes, creating the metal lyrics was more like imitating a writing style. It was closer modeling how an author writes and imitating them than it was to generating a series of poetic rhymes. So we switched to using GPT-2, as it is a better fit for the task.
+
+\section{Background}
+
+\subsection{GPT-2}
+
+The model for GPT-2 was created and trained by Open-AI in February 2019. It was trained on a 40GB corpus of textual data that was sourced from the internet. Until GPT-3, it was considered to have landmark performance in generating text while maintaining context, proper grammar, etc. as well as in translating text, answering questions, and summarizing passages. Although select instances of its output can be indistinguishable from human-generated text, its average capabilities are still significantly worse than text generated using GPT-3. However, currently, GPT-3 is restricted behind a pay-walled API. That left GPT-2 and BERT as the most promising candidates for our foray into lyric generation. While both candidates perform well at many NLP tasks, we decided to use the various GPT-2 model sizes available and to fine-tune them on our particular corpus.
+
+\subsection{LSTM as Baseline}
+
+Training LSTMs requires a large amount of GPU-based memory and computational power. Comparatively, due to our incredibly limited computational resources, the baseline was only trained on about 1\% of the data for only 5 epochs. This makes it an incredibly primitive model. However while the baseline has room for improvement, it still places a minimum bar for performance. If the GPT-2 model can’t do better then we know its application was a failure.
+
+\section{Methodology}
+
+\subsection{Pre-Processing}
+
+\begin{itemize}
+
+\item Our pre-processed corpus was generated by reading in all data files in the dataset directories in their raw text format and then preprocessing all files into a single list of song strings.
+
+\item Next, high frequency words and letters were identified that were specific to high-volume non-english languages. These “signal tokens” were selected to function as equivalents to stop words, and any song containing one of the signal tokens was removed from the set in its entirety. Most languages are Zipfian in distribution, where the highest use words and letters appear significantly more frequently than their counterparts. Identifying these common letter types like the “Umlaut”/ Ö or words equivalent to ‘the’ etc. in other languages served effectively in processing out the foreign language lyrics while leaving behind the majority of songs that actually contained English lyrics.
+
+\item Special tags were then added to the remaining data that indicate the start and end of each song. These were ‘<|song|>’ and ‘<|endoftext|>’ respectively. Each of these songs was then appended into one large corpus that was fed to the GPT-2 model using the GPT-2-simple API.
+
+\item The GPT-2-simple API then handled byte-encoding the input data and packing it into tensors for training.
+
+\end{itemize}
+
+\subsection{Model training}
+
+\begin{itemize}
+
+\item Apply transfer learning by tuning GPT-2 weights to our corpus/tokens.
+\item Generate data using the GPT-2 model.
+\item Evaluate data with BLEU to produce a baseline metric for evaluating semantic similarity between the corpus and our various models.
+\item Perform human evaluation on believability of samples and general quality of output.
+
+\end{itemize}
+
+\subsection{Baseline training}
+
+The same process applies here, however the baseline model creates its own embeddings and learns its weights after starting from some random initial values.
+
+\section{Model Fine-Tuning}
+
+Training a transformer model from scratch can be incredibly computationally expensive, however fine-tuning can achieve comparable results while requiring reasonable computational overhead. Here GPT-2 was accessed using the gpt2-simple API. This API allows us to test on different model sizes, save checkpoints during training cycles, and to generate sample texts using a modified version of "textgenrnn". The fine-tuning process used by the gpt2-simple API utilizes Neil Shepperd's rematerialization rewriter based on “Efficient Rematerialization for Deep Networks”\cite{nipsDN}. Unlike gradient checkpointing, this works in both tensorflow 1.X as well 2.0, is able to automatically select checkpoints in arbitrary graphs, and is capable of finetuning GPT-2's 1.5B parameters on a single graphics card using slightly less than 12G of video ram, and with minimal impact on system performance. These properties proved extremely useful, as training was performed locally on individual PCs with singular GPUs vs. the decision to utilize cloud-based distributed computing services, as those come with expenses and limitations of their own. For the optimizer, when fine-tuning, Adam is used by default, however the option exists to use SGD as well. While benchmarking, SGD indicates that it performs well on larger models, but it also requires adjusting the learning rate, as it lacks the gradient normalization present in Adam.
+
+
+\section{Model Evaluation}
+
+Bilingual Evaluation Understudy Score (BLEU) is a metric for evaluating a generated sentence to a reference sentence. BLEU uses n-grams to match the generated sentence with the reference sentence. A perfect match would result in a score of 1.0 while a perfect mismatch would result in a score of 0.0. For our experiment, we used our dataset of heavy metal songs as the reference and each GPT-2 generated song as the candidate for calculating the BLEU score. BLEU uses weights for each type of n-gram that is used when evaluating the score for each song. We set those weights to .1, .2, .7, and 0 \cite{BLEU}. This means that:
+\begin{itemize}
+\item About 10\% of the score is based on matching uni-grams between the candidate and the reference. 
+\item About 20\% of the score is based on matching bi-grams between the candidate and the reference. 
+\item About 70\% of the score is based on matching tri-grams between the candidate and the reference. 
+\end{itemize}
+
+We didn’t use quad-grams because most songs scored very low for not having any quad-grams matching. There were some limitations with compute time/power. Computing the BLEU scores took over 2 hours on our local computer for each model per 250 sample lyrics we evaluated. To evaluate our generated songs, we calculated the BLEU scores for each song and took the average BLEU score for all songs. We used our dataset of heavy metal songs as the reference and each GPT-2 generated song as the candidate when evaluating.
+
+Unfortunately, the BLEU score doesn’t provide a great metric for evaluating whether a generated lyric is well-formatted and contains prose similar to vocal song lyrics. It doesn’t evaluate lyrics based on the balance between the lines, the creation of stanzas, the number of syllables per line, the presence of rhyme schemes (although most songs in the corpus did not employ these). However, we needed some baseline evaluatory metric to gauge semantic similarity between the generated music and the ground truth. Additionally, although Transformers, like LSTMs are supposed to be resistant to becoming overly repetitive, because it is common in songs for lyrics to repeat various stanzas, possibly with minor alterations to a line or two within them that showcases narrative progression, this also meant that the networks were learning to repeat key areas of the song. This worked well in many cases, however it also left cases where it either devolved into obsessively repeating a particular phrase, or that it repeats a chorus or line a bit more than is commonly seen in most lyrics. This is because it is not actually matching lyrical generation and syllable counts to line length, stanza length, and musical time signatures. Producing a custom evaluator function to extract and compare some of these metrics remains as future work for this project, however was not implemented here due to time constraints.
+
+\section{Experiments}
+Training the LSTM proved quite difficult, because adding to the corpus size that it trained on exponentially increased the time and resources needed. Even training over a short number of epochs required hours of compute time. After assessing the quality of output after training for 5 epochs on 1\% of our corpus, we determined it unlikely for any substantial improvements to be seen unless it trained for thousands of hours. Considering this was simply establishing a baseline model for comparison against GPT-2, we decided that further training on the LSTM was unnecessary.
+
+Next we trained the 124M parameter and 355M parameter GPT-2 models over our entire corpus for 20,000 timesteps. Attempts were made to train the 774M and 1558M models however out-of-memory errors due to GPU memory limitations. Next, 250 text samples were generated for each network through feeding songs as input to the network. From there, BLEU scores were generated for each model by averaging their individual BLEU scores. Selected samples were then manually procured from each model through human assessment of their quality as metal lyrics. This selection factored in syllable counts per line determining a natural flow, verse length, and semantic content with “particularly metal vibes”. These samples can be found in the Samples section at the end of the paper.
+
+\section{Results}
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c| } 
+\hline
+Model & Training Length & BLEU \\
+\hline
+Baseline & 5 Epochs & 0.13 \\ 
+GPT-2 (Small) & 20,000 Timesteps & 0.71 \\ 
+GPT-2 (Medium) & 20,000 Timesteps & 0.74 \\ 
+\hline
+\end{tabular}
+\end{center}
+
+The Large and XL forms of GPT-2 (with 774M and 1558M parameters respectively) were too large to train on resident GPUs due to "Out of Memory" (OOM) errors.
+
+\subsection{Human-Based Evaluation}
+Oftentimes a critical metric in the evaluation and appreciation of art is the human component, as there are various aesthetic components that are of importance in assessing its quality. Next we address some of the key successes and failures of our GPT-2 networks abilities in generating metal lyrics.
+
+For our baseline, the output from the LSTM was very poor. An example being: “To me simple climb am the fearless,", "climb am the fearless, defeat”. Here the LSTM has very poor grammatical understanding, and additionally, it maintains semantic correlation and overarching concepts for the song very poorly across lines. Alternatively, the GPT-2 models performed well at generating verse structures, and also interjecting choruses (i.e. a short block of repeating lines) throughout the song. However, sometimes these models would loop the chorus an unnatural number of times, or get stuck in a repetitive pattern when generating a line. Addressing this degeneracy is usually a strong point of LSTMs. Although the GPT-2 transformer usually outperforms your standard LSTMs, in this case it performed worse. However, the semantic clarity and the meaningfulness of the output in the GPT-2 models was far higher than in our baseline LSTM. Not only did it loop choruses throughout the song, but it also slightly modified certain parts of the chorus over time to indicate narrative progression. Additionally, some individual lines that contributed to the overall theme of the song would repeat sometimes and then be modified to reach some kind of conclusion in the ending line.
+
+Songs sometimes displayed increased usage of exclamatory punctuation to indicate progressing intensity such as “Are you really sorry?”, “Are you really sorry?!?!”, “You are so fucking desperate!”, “Can you fucking understand?!?!”. Also, many lines contained excellent visual and visceral imagery. A few examples being: “I've been chasing the wolves. They stole my breath.”, “When I see your face my tears will turn to ice.”, “My soul is screaming through me. My bones are in pieces.“, “And the tears don't fall down just yet, they come down when I breathe.”, “Wash my body of the tears we have cried.”, “I'm gonna rock 'til I die in the rain”, “The one who cuts the throats of the lambs”, “The scars of oppression will never leave your skin”, etc.
+
+While there is good visual imagery and continuity of metal-related themes throughout many songs, there is a poor tendency of the network to state contradictory things in close succession. Sometimes this can be employed artistically to indicate sudden narrative changes, such as “I'm so tired of trying to forget. But I've got to hold on to remember”. However, in most instances it simply breaks the immersion and continuity of a lyric. Some examples being: “I remember it was a hot summer's day. A white winter's day. A beautiful view of land and sea.”, or “In the world of light, I am the chosen one” yet in the next verse it states “And we will not walk around the light of the world, for we are not the chosen ones”. In these instances it didn’t seem to offer narrative progression, but is instead conflictory information. Additionally, some lines are redundant and strange such as “If I should die”, followed by “I might as well be dead…”.
+
+Although both GPT-2 models did not produce songs that would be considered indistinguishable from human-generated lyrics, over the limited timesteps that we were trained for, inside many of these songs are verses with excellent artistic and visceral imagery and concepts that can be used by songwriters as inspiration when crafting lyrics. Obviously GPT-3 appears to offer significant improvements in these weak areas, however due to model access limitations, that remains for future work.
+
+
+\section{Interesting Insights}
+
+The fact that the model replicated the overall verse and chorus structure was unexpected. Additionally, it’s interesting to observe the key themes found in metal based on the body of samples being generated. While battles, blood, etc are common themes, lying and lies, and also love and trust are pretty common too. While the network was unable to generate text indistinguishable from human-generated lyrics, some of the samples collected were quite good, and its use as a tool for inspiring artists and songwriters may be even better. Artists may tend to take an idea or concept rather than just plagiarize lines, which means they’ll likely put more thought into crafting what they choose to take from it.
+
+
+\subsection{Conclusions}
+
+A key problem with our final model and its generated lyrics is the question of how one objectively or quantitatively determines the success of a model when generating output in an artistic domain. While selected samples do show good semantic continuity of metal themes, narrative progression within songs, usage of chorus and verse structures, and striking imagery at times, it also has issues with repetitiveness, contradictory information, and awkward redundancies. Although given more time we could have surveyed for human feedback as a judge of final lyric accuracy and quality, ultimately, we had to rely on self-evaluation performed by team members, and less fitting metrics such as the BLEU score. However, it would be interesting to see how well our model performs when judged by a wider audience. In the end, it did manage to generate some interesting metal lyrics, however the distribution of high quality songs to poor quality songs (due to the aforementioned issues) leaves significant room for improvement.
+
+
+\subsection{Future Directions}
+
+It remains to train the larger GPT-2 models, and for longer periods of time to see if they eventually produce higher quality results than the smaller models. Additionally, implementing a customized set of metrics for extracting song-likeness from the corpus and from each individual song would be a valuable avenue to pursue. This is especially useful if we were to implement a more customized GPT-2 implementation where these metrics are used in calculating the running loss of a generated text string. Our choice of API also restricted us from being able to query the network on the likelihood that a particular output came after a particular string, being able to do that would also provide an additional useful metric in evaluating its semantic similarity to actual lyrics. Other avenues of research would be to use a GAN-like model, where there is a discriminator and a generator that are trained together to produce higher quality songwriting. Lastly, there is a large body of sample data that we produced. Automating a selection mechanism instead of poring over them individually using a human selection process would be desirable, especially if GANs are used.
+
+
+\section{Ethical Considerations}
+
+There are a number of ethical considerations to be made whenever training a model. The first of which is the data that is being used, after all as the saying goes “Garbage in, Garbage out”. This applies to more than just the apparent quality of the data. One must keep in mind who and what the data is representing, its biases, as well as who is or is not being represented in the data.
+
+\subsection{Data and Data Collection}
+
+Data was scraped off of “darklyrics.com”, which contains potentially copyrighted material. There are a number of factors that play into whether or not this data is ok to use. 
+
+As the website itself claims, the lyrics posted are for educational and personal purposes only. Given that this project is for a class, and not meant to be profited from, we are using it entirely for personal and educational purposes. Additionally the use of these lyrics is still within legal “Fair Use” limits. We are commercialising neither the data nor the output of the model. On top of this, the dataset attributes each song to its corresponding artist(s).
+
+However there is a broader context to this, what if this model was meant to be on a much larger scale, to generate music on an industrial level. Legally speaking, this is still within permissible limits. A recent court case regarding the use of copyrighted material as data: “Authors Guild v. Google”. A ruling was made that google’s scanning and digitization of copy-written books was still fair use. Taking this a step further, a model that generates more lyrics based off of the initial dataset is a (according to US copyright law) “Derivative work”. In short, this is a work based off of a preexisting work that has been modified such that it is distinct from the original enough to be an “Original work of authorship”. Essentially as long as it is not direct copying or paraphrasing, and has at least added original content and/or represents something novel, it is within fair use. A common example of this would be satirical works that show depictions of common popular caricatures.
+
+This does however leave us the open question as to whether or not the legal system *should* treat it this way, particularly when a model is being commercialized. That however is a question beyond the scope of this paper.
+
+\subsection{Who will benefit? Who might be harmed/excluded?}
+
+At its core, this is an attempt to use AI to generate art. Its beneficiaries are any who enjoy it! If this creates works that inspire creativity or incite emotions, then it has succeeded in its job. It could also be used as a brainstorming tool by those who are attempting to write their own music or even used in further model training and/or analysis. One could consider it the same as any other work of art. It is important to keep in mind however that this art is based off of the art of others. So one should be very careful when basing original work off the model’s generated lyrics, as it may coincidentally land very close to actual copyrighted material.
+
+Additionally a key bias is that this model is english only, it excludes any content in any other languages, and is only based on the songs written and archived on a single website. This is far from representative of an entire musical genre and culture. As with most works of art and the communities involved with them, there is no fine line between what is considered “Heavy Metal” and what is not, and that answer will likely change from person to person.
+
+\subsection{Potential for Misuse}
+
+As stated above, there is a chance that very similar work may be generated by the algorithm and that someone could use it to plagiarize the works of others. Although this problem is mitigated by copyright laws, it does create a new headache for writers out to protect their own work. Also, even if the model displayed some semblance of creativity, someone could just use it to write songs for them rather than creating their own work. In that case, the model would at best only be helping someone mimic creativity, and at its worst stifle creativity by giving an easy answer to writing a song. While ultimately that issue is more of a problem with the individual integrity of the artist, this model is still a tool in the hands of those who may use it that way.
+
+\subsection{Energy Use for Experiments}
+
+A more recent problem under the spotlight in NLP is that of the energy cost and carbon footprint of training more advanced models. The computational cost associated with NLP is immense, and only continues to grow as the field introduces larger and more comprehensive corpora on top of even larger models with more parameters. A 2019 paper shows that tuning and experimenting with an NLP pipeline, that is parsing through and labeling a corpus to prep for training a model, emits about 72 thousand pounds of CO2\cite{MLenergy}. To make matters worse, actually tuning and training a single large transformer model (an encoder-decoder model) creates about 626 thousand pounds of CO2, which is absolutely astronomic when considering the average person only generates 11k pounds over a year, while the average american produces about 36k pounds. That means creating a single model with well tuned weights has the same CO2 emissions as approximately 57 people over the course of an entire year.
+
+With this in mind, we should really keep in mind whether or not these models are worth their cost in pollution, particularly when using vast amounts of GPU compute time (and as a consequence electricity) to create them. In the case of our model, it was more of an educational proof of concept, whose cost was that of running a single computer CPU for a couple of hours, essentially equivalent to playing video games for the same amount of time. On the other hand it is important to have a good justification when attempting to take such a model and scale it to a massive scale.
+
+However this does not necessarily mean that we should be halting all progress in NLP, but does bring to light how crucially important it is to focus on the efficiency of our algorithms as well as the hardware we run them on. GPUs are a fantastic tool for machine learning, but for the sake of our environment shouldn’t be used with reckless abandon, and the broader consequences of continuously upscaling the size of computation should be kept in mind.
+
+\section{Code}
+
+All code used can be found in our repository \href{https://github.com/shayan223/Synthetic_Metal}{https://github.com/shayan223/Synthetic\_Metal}
+
+
+\section{Sample Songs}
+
+Here is a list of sample output from the various models
+
+\underline{The Master of Lies (124M):}
+Time's come to fight, the power's rising
+Power in my hands, I'm on my way
+To fight against the evil, the lord inside me
+The lord, the master, the master of lies
+
+My spirit is strong, I ride with pride
+I'm on the run, I'm at the heart
+To fight against the evil, the lord inside me
+The lord, the master, the master of lies
+
+Power in my hands, I'm on my way
+To fight against the evil, the lord inside me
+The lord, the master, the master of lies
+
+\underline{The Pain Never Leaves Us (124M):}
+It feels like a million miles away
+The weight of fear is taking its toll
+
+I'm walking again, the pain just stays.
+I'll keep walking again, the pain just stays.
+
+It's hard to say where and when, but I'll always know that you're the one to blame
+But the pain, it hurts, it hurts, it hurts, hurts.
+
+\underline{All Things Turn to Hell (124M):}
+There's not much I can do
+But take this to my grave
+Life is like an open book
+But they just keep passing away
+
+I am no more a human
+Than a leaf in the field
+That they call me the end of the world 
+
+I want to break free
+But I can't do this alone
+It hurts to realize 
+that I've left this world
+
+But then you see it's reality
+In this world all things turn to hell 
+
+[Solos]
+
+What's up with me? 
+You're only one mind
+Why can't you see
+Your life ain't worth nothing at all
+
+You'll soon realise
+
+That we all have to go through
+The process of change
+
+But then you see it's reality
+In this world all things turn to hell
+
+\underline{The Night Of The Killing (124M):}
+We are the slaves of the night
+We will go to war
+To destroy and destroy
+We go to war
+We go to war
+
+We are the night's knights
+We come to the fight
+We come to fight
+
+Tonight we'll ride
+It's the night of the killing
+Tonight we'll fight
+It's the night of the killing
+
+Come on, rise up and join
+Come on, rise up and join
+Our war is to see the other side
+
+Tonight we'll ride
+It's the night of the killing
+Tonight we'll fight
+It's the night of the killing
+
+So rise up and join
+This is the day of the killing
+
+\underline{Walking A Tightrope (124M):}
+The path we are choosing is a simple one,
+the path we will follow always
+We walk a tightrope.
+
+We need to stop believing
+that all means nothing.
+I can see a light ahead
+
+We must stop feeling afraid.
+This is all true.
+
+If we are ever to change, we must do it together.
+Our hearts are beating.
+We need to hear each others sighs,
+because we are just two different people.
+
+We have to be strong,
+or we will never change
+what is in our hearts.
+
+We've been walking all along the track
+and we know that we're not alone.
+Let's walk this tightrope!
+
+\underline{Walking With Death (124M):}
+The sky is clear
+The mountains clear
+And lakes are deep
+
+I can see you now
+And you can feel me now
+And we can walk now
+
+Just a little while
+A little while away
+
+The moonlight
+The sun is out tonight,
+a dark horizon awaits you.
+You've been led astray.
+
+How strange it is.
+Wherein the stars align,
+to gaze upon a planet without
+one eye.
+Now you know.
+
+Darkness is my friend,
+my angel by my side.
+I know you will hear me:
+"You must die, I believe.
+I'm coming to take your life,
+and make you burn like the rest."
+
+I've seen you now
+And you can feel me now
+And we can walk now
+
+\underline{On The Wrong Side (124M):}
+Can you feel it coming
+Come on and get it!
+
+All the things I've learnt to face
+When I found the things I'm missing
+I've found the things I used to know
+
+Can I break away and start over?
+Can I grow inside and stay whole?
+
+[Chorus]:
+I'm all for what I am, when all is gray
+When you're standing on the wrong side
+When you're standing on the wrong side
+When you're standing on the wrong side
+
+Can you see it growing through the haze
+Can you heal the pain where it's gone
+And now I'm here, here in my own mind
+Can you make my life a better place
+
+Can I make you feel again?
+Can I turn around and walk away
+
+[Chorus]:
+I'm all for what I am, when all is gray
+When you're standing on the wrong side
+When you're standing on the wrong side
+When you're standing on the wrong side
+
+[Solo]
+
+[Chorus]
+
+\underline{It’s Too Late (124M):}
+The fire inside your soul
+Burns down all the walls
+You hear the cries
+But it's too late
+
+When the lights go out
+And you lose the fight
+You hear the screams
+But it's too late
+
+Raging flames inside your mind
+Takes you to the edge
+You hear the cries
+But it's too late
+
+When the light turns on
+You're on your own again
+When the shadows fall
+You're standing alone
+
+Don't close your eyes
+Don't close your eyes
+Don't close your eyes
+'Cause the world will never be the same again
+Don't close your eyes
+
+You hear the cries, you take the blame
+But it's too late
+When I see your face my tears will turn to ice
+When I see your face my tears will turn to ice
+I see the light burning down your sky
+
+\underline{Lone Wolf (124M):}
+I've been chasing the wolves
+They stole my breath
+And I've been waiting so long
+
+The time we spent in the cage of pain
+I've been feeling so alone
+And when our thoughts and our fears collide
+
+What a shame
+We've spent a lifetime looking back
+All I want is to be free
+The love I have with you never ends
+
+This is the last time I'll know the words
+Of my life
+This is the last time
+This is my love
+This is why I'm here
+To be alone
+
+\underline{There’s Nothing Left (124M):}
+My last tears rain
+Down on the floor
+My last tears rain, down on the floor
+Down on the floor
+My eyes close to the light
+
+My last tears rain
+Down on the floor
+My last tears rain, down on the floor
+My eyes close to the light
+And I know this will be gone
+
+My last tears rain
+Down on the floor
+My last tears rain, down on the floor
+My eyes close to the light
+And I know this will be the end
+
+My last tears rain
+Down on the floor
+
+\underline{The Dreamscape (124M):}
+A strange little game is starting
+The devil is calling again
+His hand is on my spine
+With his tongue in my mouth
+My life is falling apart
+Hiding on the floor
+
+I'm falling into a deep hole
+I'm running into a black hole
+
+My soul is screaming through me
+My bones are in pieces
+I've been living inside a dream
+A magic dream
+
+I never saw
+What this feeling could be
+
+Hissing me in the night
+I got lost in a dream
+Hiding on the floor
+My soul is screaming through me
+My bones are in pieces
+I've been living inside a dream
+A magic dream
+A magic dream
+It's my magic dream
+
+I never saw
+What this feeling could be
+
+The angel of light
+The angel of light
+
+\underline{Destroy All Demons (355M):}
+We are the men in black, with a hatred of all human kind
+We are a hate machine, with hate in our blood, we are a hate machine... We are the hate machine
+
+So many things we want to do, and do and do it well
+We are hungry to make a monster... And we will destroy all human kind
+And this is your last warning, you were warned already
+
+And now you know what we want to do, and will destroy all your lives
+We are the hate machine, with hate in our blood, we are a hate machine:
+
+We have seen them, the demons, of the earth
+We have met them, the demons, of heaven
+And we will destroy them, the demons, of the earth and hell
+
+A Violent Wake
+You took my flesh and blood
+You took my breath and soul
+
+And poured it into the sea
+And then you drowned
+I'm your only hope
+A man can feel only one thing
+When all around dies away.
+
+How did I let you, leave me all alone...
+I'm just one of the dead.
+The dead to me, the dead to you
+They'll have all to pay their price.
+
+Now all the dead have come to be with me.
+I will give them the world and the dark - a world which I can call my own.
+The dead on the shore, the dead on the shore at night
+I can sleep, I can feel them all around.
+
+The ghosts, the ghosts, to the dead they all run...
+What a waste of time.
+(But it's all so cold now. But it's all such quiet here.)
+I can see them in my memories.
+I have no fear.
+My heart grows lighter now.
+
+\underline{Something Deep Inside (355M):}
+Where in the deep of my soul
+I've seen a world so far from me, so long
+The secrets I sought from the world far away
+When I looked at myself, I knew that the secrets were still
+Deep within
+And those secrets I'll keep until the end of my life
+And the secrets kept within me
+Will keep on guiding me through...
+
+The day of my rebirth
+And I can't forget what I've become
+And the time I felt all the anger within me
+This hatred is killing me at every step
+And when my world crumbles I can turn
+Deep within, deep within...
+
+Now, it's time
+I wish to be free again
+I know my world will fall
+I can't wait
+
+\underline{Stoking The Flames (355M):}
+I don't care about the way I feel, I don't care at all
+It's never getting better for me
+I don't give a fuck about the way this feels
+I don't respect the way you live your life
+I don't care about the way you breathe
+Let the fuckers stay
+Let's burn them all
+Let's burn them all
+
+\underline{The Hardest Thing I Know (355M):}
+They say you're born alone
+there is no God
+that tells you what should be done
+and in the end you'll have to
+make amends
+it's the hardest thing I know
+you've got to live within yourself
+and you've got to make amends
+it's the hardest thing I know
+
+Life was not meant for you
+you're not there to save you
+and the hard truth is
+that life is a challenge to me
+it's just a case of being
+an unknown person
+you can't understand me
+to see me
+you've got to live within yourself
+and you've got to make amends
+it's the hardest thing I know
+you've got to live within yourself
+and you've got to make amends
+it's the hardest thing I know
+
+Exposed:
+In my eyes you're always so beautiful
+You hide the pain behind your eyes
+In my chest you're burning inside
+Your love is so divine
+Your love is so divine
+To show me how to hide
+I need more... to hide... to hide from you
+I need more... hide... to hide from you
+I need more... hide... from you
+
+\underline{Avert Your Eyes (355M):}
+'m already over
+There's nothing you can do except to turn your gaze away
+
+Oh there's something on your skin
+That's not quite right
+Your eyes seem so close
+They're like stars in the sky
+They seem to be here and now
+
+And there's smoke in the air
+In the back of your room
+There's a woman with legs to take you home
+But you better beware
+It's a woman that wants her way
+
+All alone down on your knees
+And she's got her way
+You know it's time to say goodbye
+You better hold on tight
+
+Don't be afraid
+There's nothing you can do
+Except turn your gaze away
+
+Oh baby
+Take my hand
+Hold me into the
+Into the light
+
+\underline{Break Through (355M):}
+They say this word can kill you
+You're better off dead
+
+[Chorus]
+
+All the things you thought that once belonged to you
+Now belong to nothing
+
+I am the power of your eyes
+I'm your destiny
+
+The things that once loved you
+Now only hold back
+The things that once loved you
+Now only hold back
+
+All of your dreams
+All your hopes
+All of what's to come
+
+\underline{Playing The Game (355M):}
+Life is a game that can be won and lost
+It's not an easy ride
+When the world comes down
+Sometimes you have to do what you feel
+To survive
+But the truth is that there's no way
+You can't be a loser and you can't be a winner
+So why should you play the victim
+When all that you need is to be safe
+
+You better pray that you will win
+You better pray that you have a chance
+You can't be the one to turn around
+
+Life is all an illusion what is the meaning
+It's in the shadows we'll never find
+The words come back again and again
+In the dark corners of your mind
+You can be very brave and not be so foolish
+But in the end this is just what you get
+
+You better pray that you will win
+You better pray that you have a chance
+You can't be the one to turn around
+
+If you take a chance on your ways
+Take your chance with your best
+It's not an easy ride, but you don't know if you'll get
+What you want to win
+
+You better pray that you get
+To what you want
+
+If you take a chance - take a chance in your life
+You got a chance to live one of life's ways
+It's not an easy way, but it is your life
+
+Pursuit
+Come to me. Come to me. I will never know you
+In this life
+Come to me. Come to me. I will never know what you have in your head
+You have the gift in your hands, but you have to use it right.
+Come to me. Come to me. I will never know you.
+
+
+
+
+
+% include your own bib file like this:
+
+\bibliographystyle{acl_natbib}
+\bibliography{sources}
+
+
+
+\end{document}
