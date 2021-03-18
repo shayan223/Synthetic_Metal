@@ -100,7 +100,7 @@ Training a transformer model from scratch can be incredibly computationally expe
 
 \section{Model Evaluation}
 
-Bilingual Evaluation Understudy Score (BLEU) is a metric for evaluating a generated sentence to a reference sentence. BLEU uses n-grams to match the generated sentence with the reference sentence. A perfect match would result in a score of 1.0 while a perfect mismatch would result in a score of 0.0. For our experiment, we used our dataset of heavy metal songs as the reference and each GPT-2 generated song as the candidate for calculating the BLEU score. BLEU uses weights for each type of n-gram that is used when evaluating the score for each song. We set those weights to .1, .2, .7, and 0 \cite{BLEU}. This means that:
+Bilingual Evaluation Understudy Score (BLEU) is a metric for evaluating a generated sentence to a reference sentence. BLEU uses n-grams to match the generated sentence with the reference sentence. A perfect match would result in a score of 1.0 while a perfect mismatch would result in a score of 0.0. For our experiment, we used our dataset of heavy metal songs as the reference and each GPT-2 generated song as the candidate for calculating the BLEU score. BLEU uses weights for each type of n-gram that is used when evaluating the score for each song. We set those weights to 0.1, 0.2, 0.7, and 0 \cite{BLEU}. This means that:
 \begin{itemize}
 \item About 10\% of the score is based on matching uni-grams between the candidate and the reference. 
 \item About 20\% of the score is based on matching bi-grams between the candidate and the reference. 
@@ -198,505 +198,505 @@ All code used can be found in our repository \href{https://github.com/shayan223/
 
 \section{Sample Songs}
 
-Here is a list of sample output from the various models
-
-\underline{The Master of Lies (124M):}
-Time's come to fight, the power's rising
-Power in my hands, I'm on my way
-To fight against the evil, the lord inside me
-The lord, the master, the master of lies
-
-My spirit is strong, I ride with pride
-I'm on the run, I'm at the heart
-To fight against the evil, the lord inside me
-The lord, the master, the master of lies
-
-Power in my hands, I'm on my way
-To fight against the evil, the lord inside me
-The lord, the master, the master of lies
-
-\underline{The Pain Never Leaves Us (124M):}
-It feels like a million miles away
-The weight of fear is taking its toll
-
-I'm walking again, the pain just stays.
-I'll keep walking again, the pain just stays.
-
+Here is a list of sample output from the various models\\\\
+\parindent=0pt
+\underline{The Master of Lies (124M):}\\
+Time's come to fight, the power's rising\\
+Power in my hands, I'm on my way\\
+To fight against the evil, the lord inside me\\
+The lord, the master, the master of lies\\
+\\
+My spirit is strong, I ride with pride\\
+I'm on the run, I'm at the heart\\
+To fight against the evil, the lord inside me\\
+The lord, the master, the master of lies\\
+\\
+Power in my hands, I'm on my way\\
+To fight against the evil, the lord inside me\\
+The lord, the master, the master of lies\\
+\\
+\underline{The Pain Never Leaves Us (124M):}\\
+It feels like a million miles away\\
+The weight of fear is taking its toll\\
+\\
+I'm walking again, the pain just stays.\\
+I'll keep walking again, the pain just stays.\\
+\\
 It's hard to say where and when, but I'll always know that you're the one to blame
-But the pain, it hurts, it hurts, it hurts, hurts.
-
-\underline{All Things Turn to Hell (124M):}
-There's not much I can do
-But take this to my grave
-Life is like an open book
-But they just keep passing away
-
-I am no more a human
-Than a leaf in the field
-That they call me the end of the world 
-
-I want to break free
-But I can't do this alone
-It hurts to realize 
-that I've left this world
-
-But then you see it's reality
-In this world all things turn to hell 
-
-[Solos]
-
-What's up with me? 
-You're only one mind
-Why can't you see
-Your life ain't worth nothing at all
-
-You'll soon realise
-
-That we all have to go through
-The process of change
-
-But then you see it's reality
-In this world all things turn to hell
-
-\underline{The Night Of The Killing (124M):}
-We are the slaves of the night
-We will go to war
-To destroy and destroy
-We go to war
-We go to war
-
-We are the night's knights
-We come to the fight
-We come to fight
-
-Tonight we'll ride
-It's the night of the killing
-Tonight we'll fight
-It's the night of the killing
-
-Come on, rise up and join
-Come on, rise up and join
-Our war is to see the other side
-
-Tonight we'll ride
-It's the night of the killing
-Tonight we'll fight
-It's the night of the killing
-
-So rise up and join
-This is the day of the killing
-
-\underline{Walking A Tightrope (124M):}
-The path we are choosing is a simple one,
-the path we will follow always
-We walk a tightrope.
-
-We need to stop believing
-that all means nothing.
-I can see a light ahead
-
-We must stop feeling afraid.
-This is all true.
-
-If we are ever to change, we must do it together.
-Our hearts are beating.
-We need to hear each others sighs,
-because we are just two different people.
-
-We have to be strong,
-or we will never change
-what is in our hearts.
-
-We've been walking all along the track
-and we know that we're not alone.
-Let's walk this tightrope!
-
-\underline{Walking With Death (124M):}
-The sky is clear
-The mountains clear
-And lakes are deep
-
-I can see you now
-And you can feel me now
-And we can walk now
-
-Just a little while
-A little while away
-
-The moonlight
-The sun is out tonight,
-a dark horizon awaits you.
-You've been led astray.
-
-How strange it is.
-Wherein the stars align,
-to gaze upon a planet without
-one eye.
-Now you know.
-
-Darkness is my friend,
-my angel by my side.
-I know you will hear me:
-"You must die, I believe.
-I'm coming to take your life,
-and make you burn like the rest."
-
-I've seen you now
-And you can feel me now
-And we can walk now
-
-\underline{On The Wrong Side (124M):}
-Can you feel it coming
-Come on and get it!
-
-All the things I've learnt to face
-When I found the things I'm missing
-I've found the things I used to know
-
-Can I break away and start over?
-Can I grow inside and stay whole?
-
-[Chorus]:
-I'm all for what I am, when all is gray
-When you're standing on the wrong side
-When you're standing on the wrong side
-When you're standing on the wrong side
-
-Can you see it growing through the haze
-Can you heal the pain where it's gone
-And now I'm here, here in my own mind
-Can you make my life a better place
-
-Can I make you feel again?
-Can I turn around and walk away
-
-[Chorus]:
-I'm all for what I am, when all is gray
-When you're standing on the wrong side
-When you're standing on the wrong side
-When you're standing on the wrong side
-
-[Solo]
-
-[Chorus]
-
-\underline{It’s Too Late (124M):}
-The fire inside your soul
-Burns down all the walls
-You hear the cries
-But it's too late
-
-When the lights go out
-And you lose the fight
-You hear the screams
-But it's too late
-
-Raging flames inside your mind
-Takes you to the edge
-You hear the cries
-But it's too late
-
-When the light turns on
-You're on your own again
-When the shadows fall
-You're standing alone
-
-Don't close your eyes
-Don't close your eyes
-Don't close your eyes
-'Cause the world will never be the same again
-Don't close your eyes
-
-You hear the cries, you take the blame
-But it's too late
-When I see your face my tears will turn to ice
-When I see your face my tears will turn to ice
-I see the light burning down your sky
-
-\underline{Lone Wolf (124M):}
-I've been chasing the wolves
-They stole my breath
-And I've been waiting so long
-
-The time we spent in the cage of pain
-I've been feeling so alone
-And when our thoughts and our fears collide
-
-What a shame
-We've spent a lifetime looking back
-All I want is to be free
-The love I have with you never ends
-
-This is the last time I'll know the words
-Of my life
-This is the last time
-This is my love
-This is why I'm here
-To be alone
-
-\underline{There’s Nothing Left (124M):}
-My last tears rain
-Down on the floor
-My last tears rain, down on the floor
-Down on the floor
-My eyes close to the light
-
-My last tears rain
-Down on the floor
-My last tears rain, down on the floor
-My eyes close to the light
-And I know this will be gone
-
-My last tears rain
-Down on the floor
-My last tears rain, down on the floor
-My eyes close to the light
-And I know this will be the end
-
-My last tears rain
-Down on the floor
-
-\underline{The Dreamscape (124M):}
-A strange little game is starting
-The devil is calling again
-His hand is on my spine
-With his tongue in my mouth
-My life is falling apart
-Hiding on the floor
-
-I'm falling into a deep hole
-I'm running into a black hole
-
-My soul is screaming through me
-My bones are in pieces
-I've been living inside a dream
-A magic dream
-
-I never saw
-What this feeling could be
-
-Hissing me in the night
-I got lost in a dream
-Hiding on the floor
-My soul is screaming through me
-My bones are in pieces
-I've been living inside a dream
-A magic dream
-A magic dream
-It's my magic dream
-
-I never saw
-What this feeling could be
-
-The angel of light
-The angel of light
-
-\underline{Destroy All Demons (355M):}
-We are the men in black, with a hatred of all human kind
-We are a hate machine, with hate in our blood, we are a hate machine... We are the hate machine
-
-So many things we want to do, and do and do it well
-We are hungry to make a monster... And we will destroy all human kind
-And this is your last warning, you were warned already
-
-And now you know what we want to do, and will destroy all your lives
-We are the hate machine, with hate in our blood, we are a hate machine:
-
-We have seen them, the demons, of the earth
-We have met them, the demons, of heaven
-And we will destroy them, the demons, of the earth and hell
-
-A Violent Wake
-You took my flesh and blood
-You took my breath and soul
-
-And poured it into the sea
-And then you drowned
-I'm your only hope
-A man can feel only one thing
-When all around dies away.
-
-How did I let you, leave me all alone...
-I'm just one of the dead.
-The dead to me, the dead to you
-They'll have all to pay their price.
-
-Now all the dead have come to be with me.
-I will give them the world and the dark - a world which I can call my own.
-The dead on the shore, the dead on the shore at night
-I can sleep, I can feel them all around.
-
-The ghosts, the ghosts, to the dead they all run...
-What a waste of time.
-(But it's all so cold now. But it's all such quiet here.)
-I can see them in my memories.
-I have no fear.
-My heart grows lighter now.
-
-\underline{Something Deep Inside (355M):}
-Where in the deep of my soul
-I've seen a world so far from me, so long
-The secrets I sought from the world far away
-When I looked at myself, I knew that the secrets were still
-Deep within
-And those secrets I'll keep until the end of my life
-And the secrets kept within me
-Will keep on guiding me through...
-
-The day of my rebirth
-And I can't forget what I've become
-And the time I felt all the anger within me
-This hatred is killing me at every step
-And when my world crumbles I can turn
-Deep within, deep within...
-
-Now, it's time
-I wish to be free again
-I know my world will fall
-I can't wait
-
-\underline{Stoking The Flames (355M):}
-I don't care about the way I feel, I don't care at all
-It's never getting better for me
-I don't give a fuck about the way this feels
-I don't respect the way you live your life
-I don't care about the way you breathe
-Let the fuckers stay
-Let's burn them all
-Let's burn them all
-
-\underline{The Hardest Thing I Know (355M):}
-They say you're born alone
-there is no God
-that tells you what should be done
-and in the end you'll have to
-make amends
-it's the hardest thing I know
-you've got to live within yourself
-and you've got to make amends
-it's the hardest thing I know
-
-Life was not meant for you
-you're not there to save you
-and the hard truth is
-that life is a challenge to me
-it's just a case of being
-an unknown person
-you can't understand me
-to see me
-you've got to live within yourself
-and you've got to make amends
-it's the hardest thing I know
-you've got to live within yourself
-and you've got to make amends
-it's the hardest thing I know
-
-Exposed:
-In my eyes you're always so beautiful
-You hide the pain behind your eyes
-In my chest you're burning inside
-Your love is so divine
-Your love is so divine
-To show me how to hide
-I need more... to hide... to hide from you
-I need more... hide... to hide from you
-I need more... hide... from you
-
-\underline{Avert Your Eyes (355M):}
-'m already over
-There's nothing you can do except to turn your gaze away
-
-Oh there's something on your skin
-That's not quite right
-Your eyes seem so close
-They're like stars in the sky
-They seem to be here and now
-
-And there's smoke in the air
-In the back of your room
-There's a woman with legs to take you home
-But you better beware
-It's a woman that wants her way
-
-All alone down on your knees
-And she's got her way
-You know it's time to say goodbye
-You better hold on tight
-
-Don't be afraid
-There's nothing you can do
-Except turn your gaze away
-
-Oh baby
-Take my hand
-Hold me into the
-Into the light
-
-\underline{Break Through (355M):}
-They say this word can kill you
-You're better off dead
-
-[Chorus]
-
-All the things you thought that once belonged to you
-Now belong to nothing
-
-I am the power of your eyes
-I'm your destiny
-
-The things that once loved you
-Now only hold back
-The things that once loved you
-Now only hold back
-
-All of your dreams
-All your hopes
-All of what's to come
-
-\underline{Playing The Game (355M):}
-Life is a game that can be won and lost
-It's not an easy ride
-When the world comes down
-Sometimes you have to do what you feel
-To survive
-But the truth is that there's no way
-You can't be a loser and you can't be a winner
-So why should you play the victim
-When all that you need is to be safe
-
-You better pray that you will win
-You better pray that you have a chance
-You can't be the one to turn around
-
-Life is all an illusion what is the meaning
-It's in the shadows we'll never find
-The words come back again and again
-In the dark corners of your mind
-You can be very brave and not be so foolish
-But in the end this is just what you get
-
-You better pray that you will win
-You better pray that you have a chance
-You can't be the one to turn around
-
-If you take a chance on your ways
-Take your chance with your best
-It's not an easy ride, but you don't know if you'll get
-What you want to win
-
-You better pray that you get
-To what you want
-
-If you take a chance - take a chance in your life
-You got a chance to live one of life's ways
-It's not an easy way, but it is your life
-
-Pursuit
-Come to me. Come to me. I will never know you
-In this life
-Come to me. Come to me. I will never know what you have in your head
-You have the gift in your hands, but you have to use it right.
-Come to me. Come to me. I will never know you.
+But the pain, it hurts, it hurts, it hurts, hurts.\\
+
+\underline{All Things Turn to Hell (124M):}\\
+There's not much I can do\\
+But take this to my grave\\
+Life is like an open book\\
+But they just keep passing away\\
+\\
+I am no more a human\\
+Than a leaf in the field\\
+That they call me the end of the world \\
+\\
+I want to break free\\
+But I can't do this alone\\
+It hurts to realize \\
+that I've left this world\\
+\\
+But then you see it's reality\\
+In this world all things turn to hell \\
+\\
+[Solos]\\
+\\
+What's up with me? \\
+You're only one mind\\
+Why can't you see\\
+Your life ain't worth nothing at all\\
+\\
+You'll soon realise\\
+\\
+That we all have to go through\\
+The process of change\\
+\\
+But then you see it's reality\\
+In this world all things turn to hell\\
+\\
+\underline{The Night Of The Killing (124M):}\\
+We are the slaves of the night\\
+We will go to war\\
+To destroy and destroy\\
+We go to war\\
+We go to war\\
+\\
+We are the night's knights\\
+We come to the fight\\
+We come to fight\\
+\\
+Tonight we'll ride\\
+It's the night of the killing\\
+Tonight we'll fight\\
+It's the night of the killing\\
+\\
+Come on, rise up and join\\
+Come on, rise up and join\\
+Our war is to see the other side\\
+\\
+Tonight we'll ride\\
+It's the night of the killing\\
+Tonight we'll fight\\
+It's the night of the killing\\
+\\
+So rise up and join\\
+This is the day of the killing\\
+
+\underline{Walking A Tightrope (124M):}\\
+The path we are choosing is a simple one,\\
+the path we will follow always\\
+We walk a tightrope.\\
+\\
+We need to stop believing\\
+that all means nothing.\\
+I can see a light ahead\\
+\\
+We must stop feeling afraid.\\
+This is all true.\\
+\\
+If we are ever to change, we must do it together.\\
+Our hearts are beating.\\
+We need to hear each others sighs,\\
+because we are just two different people.\\
+\\
+We have to be strong,\\
+or we will never change\\
+what is in our hearts.\\
+\\
+We've been walking all along the track\\
+and we know that we're not alone.\\
+Let's walk this tightrope!\\
+\\
+\underline{Walking With Death (124M):}\\
+The sky is clear\\
+The mountains clear\\
+And lakes are deep\\
+\\
+I can see you now\\
+And you can feel me now\\
+And we can walk now\\
+\\
+Just a little while\\
+A little while away\\
+\\
+The moonlight\\
+The sun is out tonight,\\
+a dark horizon awaits you.\\
+You've been led astray.\\
+\\
+How strange it is.\\
+Wherein the stars align,\\
+to gaze upon a planet without\\
+one eye.\\
+Now you know.\\
+\\
+Darkness is my friend,\\
+my angel by my side.\\
+I know you will hear me:\\
+"You must die, I believe.\\
+I'm coming to take your life,\\
+and make you burn like the rest."\\
+\\
+I've seen you now\\
+And you can feel me now\\
+And we can walk now\\
+\\
+\underline{On The Wrong Side (124M):}\\
+Can you feel it coming\\
+Come on and get it!\\
+\\
+All the things I've learnt to face\\
+When I found the things I'm missing\\
+I've found the things I used to know\\
+\\
+Can I break away and start over?\\
+Can I grow inside and stay whole?\\
+\\
+[Chorus]:\\
+I'm all for what I am, when all is gray\\
+When you're standing on the wrong side\\
+When you're standing on the wrong side\\
+When you're standing on the wrong side\\
+\\
+Can you see it growing through the haze\\
+Can you heal the pain where it's gone\\
+And now I'm here, here in my own mind\\
+Can you make my life a better place\\
+\\
+Can I make you feel again?\\
+Can I turn around and walk away\\
+\\
+[Chorus]:\\
+I'm all for what I am, when all is gray\\
+When you're standing on the wrong side\\
+When you're standing on the wrong side\\
+When you're standing on the wrong side\\
+\\
+[Solo]\\
+\\
+[Chorus]\\
+\\
+\underline{It’s Too Late (124M):}\\
+The fire inside your soul\\
+Burns down all the walls\\
+You hear the cries\\
+But it's too late\\
+\\
+When the lights go out\\
+And you lose the fight\\
+You hear the screams\\
+But it's too late\\
+\\
+Raging flames inside your mind\\
+Takes you to the edge\\
+You hear the cries\\
+But it's too late\\
+\\
+When the light turns on\\
+You're on your own again\\
+When the shadows fall\\
+You're standing alone\\
+\\
+Don't close your eyes\\
+Don't close your eyes\\
+Don't close your eyes\\
+'Cause the world will never be the same again\\
+Don't close your eyes\\
+\\
+You hear the cries, you take the blame\\
+But it's too late\\
+When I see your face my tears will turn to ice\\
+When I see your face my tears will turn to ice\\
+I see the light burning down your sky\\
+\\
+\underline{Lone Wolf (124M):}\\
+I've been chasing the wolves\\
+They stole my breath\\
+And I've been waiting so long\\
+\\
+The time we spent in the cage of pain\\
+I've been feeling so alone\\
+And when our thoughts and our fears collide\\
+\\
+What a shame\\
+We've spent a lifetime looking back\\
+All I want is to be free\\
+The love I have with you never ends\\
+\\
+This is the last time I'll know the words\\
+Of my life\\
+This is the last time\\
+This is my love\\
+This is why I'm here\\
+To be alone\\
+\\
+\underline{There’s Nothing Left (124M):}\\
+My last tears rain\\
+Down on the floor\\
+My last tears rain, down on the floor\\
+Down on the floor\\
+My eyes close to the light\\
+\\
+My last tears rain\\
+Down on the floor\\
+My last tears rain, down on the floor\\
+My eyes close to the light\\
+And I know this will be gone\\
+\\
+My last tears rain\\
+Down on the floor\\
+My last tears rain, down on the floor\\
+My eyes close to the light\\
+And I know this will be the end\\
+\\
+My last tears rain\\
+Down on the floor\\
+\\
+\underline{The Dreamscape (124M):}\\
+A strange little game is starting\\
+The devil is calling again\\
+His hand is on my spine\\
+With his tongue in my mouth\\
+My life is falling apart\\
+Hiding on the floor\\
+\\
+I'm falling into a deep hole\\
+I'm running into a black hole\\
+\\
+My soul is screaming through me\\
+My bones are in pieces\\
+I've been living inside a dream\\
+A magic dream\\
+\\
+I never saw\\
+What this feeling could be\\
+\\
+Hissing me in the night\\
+I got lost in a dream\\
+Hiding on the floor\\
+My soul is screaming through me\\
+My bones are in pieces\\
+I've been living inside a dream\\
+A magic dream\\
+A magic dream\\
+It's my magic dream\\
+\\
+I never saw\\
+What this feeling could be\\
+\\
+The angel of light\\
+The angel of light\\
+\\
+\underline{Destroy All Demons (355M):}\\
+We are the men in black, with a hatred of all human kind\\
+We are a hate machine, with hate in our blood, we are a hate machine... We are the hate machine\\
+\\
+So many things we want to do, and do and do it well\\
+We are hungry to make a monster... And we will destroy all human kind\\
+And this is your last warning, you were warned already\\
+\\
+And now you know what we want to do, and will destroy all your lives\\
+We are the hate machine, with hate in our blood, we are a hate machine:\\
+\\
+We have seen them, the demons, of the earth\\
+We have met them, the demons, of heaven\\
+And we will destroy them, the demons, of the earth and hell\\
+\\
+A Violent Wake\\
+You took my flesh and blood\\
+You took my breath and soul\\
+\\
+And poured it into the sea\\
+And then you drowned\\
+I'm your only hope\\
+A man can feel only one thing\\
+When all around dies away.\\
+\\
+How did I let you, leave me all alone...\\
+I'm just one of the dead.\\
+The dead to me, the dead to you\\
+They'll have all to pay their price.\\
+\\
+Now all the dead have come to be with me.\\
+I will give them the world and the dark - a world which I can call my own.\\
+The dead on the shore, the dead on the shore at night\\
+I can sleep, I can feel them all around.\\
+\\
+The ghosts, the ghosts, to the dead they all run...\\
+What a waste of time.\\
+(But it's all so cold now. But it's all such quiet here.)\\
+I can see them in my memories.\\
+I have no fear.\\
+My heart grows lighter now.\\
+\\
+\underline{Something Deep Inside (355M):}\\
+Where in the deep of my soul\\
+I've seen a world so far from me, so long\\
+The secrets I sought from the world far away\\
+When I looked at myself, I knew that the secrets were still\\
+Deep within\\
+And those secrets I'll keep until the end of my life\\
+And the secrets kept within me\\
+Will keep on guiding me through...\\
+\\
+The day of my rebirth\\
+And I can't forget what I've become\\
+And the time I felt all the anger within me\\
+This hatred is killing me at every step\\
+And when my world crumbles I can turn\\
+Deep within, deep within...\\
+\\
+Now, it's time\\
+I wish to be free again\\
+I know my world will fall\\
+I can't wait\\
+\\
+\underline{Stoking The Flames (355M):}\\
+I don't care about the way I feel, I don't care at all\\
+It's never getting better for me\\
+I don't give a fuck about the way this feels\\
+I don't respect the way you live your life\\
+I don't care about the way you breathe\\
+Let the fuckers stay\\
+Let's burn them all\\
+Let's burn them all\\
+\\
+\underline{The Hardest Thing I Know (355M):}\\
+They say you're born alone\\
+there is no God\\
+that tells you what should be done\\
+and in the end you'll have to\\
+make amends\\
+it's the hardest thing I know\\
+you've got to live within yourself\\
+and you've got to make amends\\
+it's the hardest thing I know\\
+\\
+Life was not meant for you\\
+you're not there to save you\\
+and the hard truth is\\
+that life is a challenge to me\\
+it's just a case of being\\
+an unknown person\\
+you can't understand me\\
+to see me\\
+you've got to live within yourself\\
+and you've got to make amends\\
+it's the hardest thing I know\\
+you've got to live within yourself\\
+and you've got to make amends\\
+it's the hardest thing I know\\
+\\
+Exposed:\\
+In my eyes you're always so beautiful\\
+You hide the pain behind your eyes\\
+In my chest you're burning inside\\
+Your love is so divine\\
+Your love is so divine\\
+To show me how to hide\\
+I need more... to hide... to hide from you\\
+I need more... hide... to hide from you\\
+I need more... hide... from you\\
+\\
+\underline{Avert Your Eyes (355M):}\\
+'m already over\\
+There's nothing you can do except to turn your gaze away\\
+\\
+Oh there's something on your skin\\
+That's not quite right\\
+Your eyes seem so close\\
+They're like stars in the sky\\
+They seem to be here and now\\
+\\
+And there's smoke in the air\\
+In the back of your room\\
+There's a woman with legs to take you home\\
+But you better beware\\
+It's a woman that wants her way\\
+\\
+All alone down on your knees\\
+And she's got her way\\
+You know it's time to say goodbye\\
+You better hold on tight\\
+\\
+Don't be afraid\\
+There's nothing you can do\\
+Except turn your gaze away\\
+\\
+Oh baby\\
+Take my hand\\
+Hold me into the\\
+Into the light\\
+\\
+\underline{Break Through (355M):}\\
+They say this word can kill you\\
+You're better off dead\\
+\\
+[Chorus]\\
+\\
+All the things you thought that once belonged to you\\
+Now belong to nothing\\
+\\
+I am the power of your eyes\\
+I'm your destiny\\
+\\
+The things that once loved you\\
+Now only hold back\\
+The things that once loved you\\
+Now only hold back\\
+\\
+All of your dreams\\
+All your hopes\\
+All of what's to come\\
+\\
+\underline{Playing The Game (355M):}\\
+Life is a game that can be won and lost\\
+It's not an easy ride\\
+When the world comes down\\
+Sometimes you have to do what you feel\\
+To survive\\
+But the truth is that there's no way\\
+You can't be a loser and you can't be a winner\\
+So why should you play the victim\\
+When all that you need is to be safe\\
+\\
+You better pray that you will win\\
+You better pray that you have a chance\\
+You can't be the one to turn around\\
+\\
+Life is all an illusion what is the meaning\\
+It's in the shadows we'll never find\\
+The words come back again and again\\
+In the dark corners of your mind\\
+You can be very brave and not be so foolish\\
+But in the end this is just what you get\\
+\\
+You better pray that you will win\\
+You better pray that you have a chance\\
+You can't be the one to turn around\\
+\\
+If you take a chance on your ways\\
+Take your chance with your best\\
+It's not an easy ride, but you don't know if you'll get\\
+What you want to win\\
+\\
+You better pray that you get\\
+To what you want\\
+\\
+If you take a chance - take a chance in your life\\
+You got a chance to live one of life's ways\\
+It's not an easy way, but it is your life\\
+\\
+\underline{Pursuit}\\
+Come to me. Come to me. I will never know you\\
+In this life\\
+Come to me. Come to me. I will never know what you have in your head\\
+You have the gift in your hands, but you have to use it right.\\
+Come to me. Come to me. I will never know you.\\
 
 
 
